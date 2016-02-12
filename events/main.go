@@ -3,29 +3,16 @@ package main
 // No Previous State check if it is User driven event
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
 	"os"
-	"os/signal"
 	"strings"
-	"syscall"
 
-	"github.com/aravindavk/glusterrest/glustercli"
 	"github.com/aravindavk/glusterrest/grutil"
 )
-
-func Sign(secret string, message string) string {
-	key := []byte(secret)
-	h := hmac.New(sha256.New, key)
-	h.Write([]byte(message))
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
-}
 
 func HandleVolumeCreate(data string) {
 	fmt.Printf("Volume %s is Created\n", data)
@@ -42,33 +29,6 @@ func HandleVolumeStop(data string) {
 
 func HandleVolumeDelete(data string) {
 	fmt.Printf("Volume %s is Deleted\n", data)
-}
-
-func LoadPeers(fail bool) {
-	read_peers(true)
-}
-
-func Autoload() {
-	LoadPeers(true)
-	s := make(chan os.Signal, 1)
-	signal.Notify(s, syscall.SIGUSR2)
-	go func() {
-		for {
-			<-s
-			LoadPeers(false)
-			log.Println("Reloaded")
-		}
-	}()
-}
-
-func read_peers(fail bool) {
-	p, err := glustercli.PoolList()
-	if err != nil {
-		if fail {
-			log.Fatal("Peers list failed", err)
-		}
-	}
-	grutil.Peers = p
 }
 
 func worker() {
@@ -150,6 +110,6 @@ func read_gluster_app_id(apps *map[string]string, fail bool) {
 }
 
 func main() {
-	Autoload()
+	grutil.Autoload()
 	events_listener(grutil.EVENTS_SOCK)
 }

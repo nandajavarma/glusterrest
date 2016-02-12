@@ -4,7 +4,8 @@ After=syslog.target network.target glusterd glusterrestd
 
 [Service]
 Type=simple
-ExecStart=/usr/sbin/glusterevents agent
+ExecStart=glustereventsd
+ExecReload=/bin/kill -SIGUSR1 $MAINPID
 Restart=on-failure
 LimitNOFILE=10000
 

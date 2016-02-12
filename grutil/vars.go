@@ -7,12 +7,12 @@ import (
 
 var (
 	PORT          = 8080
-	CERT          = "server.pem"
-	KEY           = "server.key"
+	CERT          = "/var/lib/glusterd/rest/server.pem"
+	KEY           = "/var/lib/glusterd/rest/server.key"
 	HTTPS         = false
-	APPS_DB       = "apps.json"
-	CONF_FILE     = "glusterrest.json"
-	SERVER_LOG    = "server.log"
+	APPS_DB       = "/var/lib/glusterd/rest/apps.json"
+	CONF_FILE     = "/etc/glusterfs/glusterrest.json"
+	SERVER_LOG    = "/var/log/glusterfs/rest/access.log"
 	EVENTS_SOCK   = "/var/run/gluster/events.sock"
 	INTERNAL_USER = "gluster"
 	INTERNAL_URL  = "/v1/listen"

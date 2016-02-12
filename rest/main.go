@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	Autoload()
+	grutil.Autoload()
 	router := mux.NewRouter().StrictSlash(true)
 	AddRoutes(router)
 

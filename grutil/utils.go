@@ -14,9 +14,139 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"log"
+	"os/signal"
+	"io/ioutil"
 
 	"github.com/gorilla/websocket"
+	"github.com/aravindavk/glusterrest/glustercli"
 )
+
+func read_apps(apps *map[string]string, fail bool) {
+	lock, err := NewLock(APPS_DB)
+	if err != nil {
+		if fail {
+			log.Fatal("Apps file Lock failed", err)
+		}
+		return
+	}
+	defer lock.Unlock()
+	lock.Lock()
+	data, err := ioutil.ReadFile(APPS_DB)
+	if err != nil && fail {
+		log.Fatal("No file")
+	}
+
+	err1 := json.Unmarshal(data, &apps)
+	if err1 != nil && fail {
+		log.Fatal("json err")
+	}
+}
+
+func write_apps(apps *map[string]string, fail bool) {
+	lock, err := NewLock(APPS_DB)
+	if err != nil {
+		if fail {
+			log.Fatal("Apps file Lock failed", err)
+		}
+		return
+	}
+	defer lock.Unlock()
+	lock.Lock()
+	data_op, err2 := json.Marshal(apps)
+	if err2 != nil {
+		if fail {
+			log.Fatal("to json err", err2)
+		}
+		return
+	}
+	err3 := ioutil.WriteFile(APPS_DB, data_op, 0644)
+	if err3 != nil {
+		if fail {
+			log.Fatal("Write err", err3)
+		}
+	}
+}
+
+func LoadApps(fail bool) {
+	Apps = make(map[string]string)
+	read_apps(&Apps, true)
+}
+
+func Autoload() {
+	LoadApps(true)
+	LoadPeers(true)
+	s := make(chan os.Signal, 1)
+	signal.Notify(s, syscall.SIGUSR2)
+	go func() {
+		for {
+			<-s
+			LoadApps(false)
+			LoadPeers(true)
+			log.Println("Reloaded")
+		}
+	}()
+}
+
+func LoadPeers(fail bool) {
+	read_peers(true)
+}
+
+func read_peers(fail bool) {
+	p, err := glustercli.PoolList()
+	if err != nil {
+		if fail {
+			log.Fatal("Peers list failed", err)
+		}
+	}
+	Peers = p
+}
+
+func write_config(config *Config, fail bool) {
+	lock, err := NewLock(CONF_FILE)
+	if err != nil {
+		if fail {
+			log.Fatal("Config file Lock failed", err)
+		}
+		return
+	}
+	defer lock.Unlock()
+	lock.Lock()
+	data_op, err2 := json.Marshal(config)
+	if err2 != nil {
+		if fail {
+			log.Fatal("to json err", err2)
+		}
+		return
+	}
+	err3 := ioutil.WriteFile(CONF_FILE, data_op, 0644)
+	if err3 != nil {
+		if fail {
+			log.Fatal("Write err", err3)
+		}
+	}
+}
+
+func read_config(config *Config, fail bool) {
+	lock, err := NewLock(CONF_FILE)
+	if err != nil {
+		if fail {
+			log.Fatal("Config file Lock failed", err)
+		}
+		return
+	}
+	defer lock.Unlock()
+	lock.Lock()
+	data, err := ioutil.ReadFile(CONF_FILE)
+	if err != nil && fail {
+		log.Fatal("No conf file")
+	}
+
+	err1 := json.Unmarshal(data, &config)
+	if err1 != nil && fail {
+		log.Fatal("json err")
+	}
+}
 
 func NewLock(path string) (*Lockfile, error) {
 	fh, err := os.Open(path)

@@ -37,9 +37,6 @@ docgen:
 
 build: verifiers vendor-update test docgen devbuild
 
-hello:
-	@echo A${PREFIX}A${DESTDIR}A
-
 fmt:
 	go fmt ./rest/...
 	go fmt ./events/...
@@ -52,11 +49,15 @@ install:
 	install -d ${DESTDIR}/etc/glusterfs/
 	install -d ${DESTDIR}${PREFIX}/lib/systemd/system/
 	install -d ${DESTDIR}/var/log/glusterfs/
+	install -d ${DESTDIR}${PREFIX}/libexec/glusterfs/
+	install -d ${DESTDIR}/var/lib/glusterd/rest
 	install -m 755 ./bin/glusterrestd ${DESTDIR}${PREFIX}/sbin/glusterrestd
 	install -m 755 ./bin/glustereventsd ${DESTDIR}${PREFIX}/sbin/glustereventsd
 	install -m 0600 ./extra/glusterrest.json ${DESTDIR}/etc/glusterfs/glusterrest.json
+	install -m 0600 ./extra/apps.json ${DESTDIR}/var/lib/glusterd/rest/apps.json
 	install -m 0644 ./extra/glusterrestd.service ${DESTDIR}${PREFIX}/lib/systemd/system/
 	install -m 0644 ./extra/glustereventsd.service ${DESTDIR}${PREFIX}/lib/systemd/system/
+	install -m 755 ./tools/peer_restcli.py ${DESTDIR}${PREFIX}/libexec/glusterfs/
 	install -m 755 -d ${DESTDIR}/var/log/glusterfs/rest
 
 lint:

@@ -105,8 +105,8 @@ Example:
 
     curl -i -X POST \
         -H "Content-Type: application/json" \
-        -H "Date: Fri, 12 Feb 2016 14:42:16 +0000" \
-        -H "Authorization: HMAC_SHA256 MyApp:ZaAYL5bLGQngCc3OIds64fxccdBthliVV2ntfA0mckY=" \
+        -H "Date: Fri, 12 Feb 2016 19:20:43 +0000" \
+        -H "Authorization: HMAC_SHA256 MyApp:Qqk4cPDfGMDLvHtm2G59ersQ71AfNxCs2JcYdisz/vQ=" \
         https://hostname/v1/peers
 
 ## <a name="head_peers_delete">API Peers Delete
@@ -119,7 +119,7 @@ Example:
 
     curl -i -X DELETE \
         -H "Content-Type: application/json" \
-        -H "Date: Fri, 12 Feb 2016 14:42:16 +0000" \
-        -H "Authorization: HMAC_SHA256 MyApp:uFyGuaMIygEqnUomp0Ir7wx8WO0WffiRvc5CKXkmvkI=" \
+        -H "Date: Fri, 12 Feb 2016 19:20:43 +0000" \
+        -H "Authorization: HMAC_SHA256 MyApp:XcFZHS/4d0CvKibJw4qCjF5/J/U+JZQzDBd/7akayzQ=" \
         https://hostname/v1/peers
 

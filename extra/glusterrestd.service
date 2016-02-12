@@ -4,7 +4,8 @@ After=syslog.target network.target glusterd
 
 [Service]
 Type=simple
-ExecStart=/usr/sbin/glusterrest server
+ExecStart=glusterrestd
+ExecReload=/bin/kill -SIGUSR1 $MAINPID
 Restart=on-failure
 LimitNOFILE=10000
 
