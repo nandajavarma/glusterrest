@@ -1,0 +1,8 @@
+{
+    "use_meta_volume": true,
+    "meta_volume_mount": "/var/run/gluster/shared_storage",
+    "use_https": false,
+    "private_key": "~/server.key",
+    "certificate": "~/server.pem",
+    "port": 8080
+}

@@ -1,0 +1,5 @@
+package: github.com/aravindavk/glusterrest
+import:
+- package: github.com/gorilla/handlers
+- package: github.com/gorilla/mux
+- package: github.com/gorilla/websocket

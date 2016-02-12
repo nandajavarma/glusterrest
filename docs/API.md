@@ -1,0 +1,125 @@
+# REST Management APIs and Eventing APIs documentation
+
+- [API Version](#api_version)
+- [Request Format](#head_request_format)
+- Client and Server errors
+   - [401 Unauthorized](#head_client_error_401)
+   - [400 Bad Request](#head_client_error_400)
+   - [422 Unprocessable Entity](#head_client_error_422)
+   - [500 Internal Server Error](#head_server_error_500)
+
+- APIs:
+
+|Group          |Description           |Method |URL|
+|---------------|----------------------|-------|---|
+|Peers|Peers Add|POST|[/peers](#head_peers_add)|
+|Peers|Peers Delete|DELETE|[/peers](#head_peers_delete)|
+
+## <a name="head_api_version"></a>API Version
+Current API version is `v1.0`, this should be included as part all
+URLs unless specified.
+
+For example,
+
+    https://hostname/v1.0 or wss://hostname/v1.0
+
+
+## <a name="head_request_format"></a>Request Format
+For POST and PUT requests, the request body must be JSON, with the
+`Content-Type` header set to `application/json`
+
+Authorization header must be included with every request. Auth header
+should have following details
+
+    <SIGN_TYPE> <APP_ID>:<SIGN>
+
+Example,
+
+	Authorization: HMAC_SHA256 Myapp:kQQsoJeo/rE3FXInaLwMj1oa9EPagie2D2Y+AnV+4hQ="
+
+Where APP_ID is the Id which is registered with Gluster using `gluster
+rest app <APP_ID> [<APP_SECRET>]`
+
+SIGN is HMAC hash generated using APP_SECRET used in above command.
+
+    Message = HTTP_METHOD + "\n" + URL
+    SIGN = base64_encode(hmac(APP_SECRET, Message))
+
+**Note:** Signature should include HTTP request body as well as
+  headers content. Signing process is in Progress.
+
+## Client Errors
+### <a name="head_client_error_401"></a>401 Unauthorized
+Unauthorized access will result in 401 UnAuthorized response.
+
+    HTTP/1.1 401 Unauthorized
+    Content-Type: application/json
+    Content-Length: 26
+
+    {"message":"Unauthorized"}
+
+### <a name="head_client_error_400"></a>400 Bad Request
+Invalid JSON will result in a 400 Bad Request response.
+
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    Content-Length: 35
+
+    {"message":"Problems parsing JSON"}
+
+### <a name="head_client_error_422"></a>422 Unprocessable Entity
+Invalid fields will result in a 422 Unprocessable Entity response.
+
+    HTTP/1.1 422 Unprocessable Entity
+    Content-Type: application/json
+    Content-Length: 176
+
+    {
+        "message": "Invalid inputs",
+        "errors": [
+            {
+                "field": "name",
+                "code": "missing_field"
+            }
+        ]
+    }
+
+## Server Errors
+### <a name="head_server_error_500"></a>500 Internal Server Error
+If all the inputs are valid but failed to execute the required Gluster commands
+
+    HTTP/1.1 500 Internal Server Error
+    Content-Type: application/json
+    Content-Length: 79
+
+    {"message":"Connection failed. Please check if gluster daemon is
+    operational.", "rc": 1}
+
+## <a name="head_peers_add">API Peers Add
+|POST       |/peers|
+|-----------|-----------------|
+|Parameters:| hosts - `list` List of Hosts(**Required**)|
+|Response: |HTTP/1.1 200 OK|
+
+Example:
+
+    curl -i -X POST \
+        -H "Content-Type: application/json" \
+        -H "Date: Fri, 12 Feb 2016 14:42:16 +0000" \
+        -H "Authorization: HMAC_SHA256 MyApp:ZaAYL5bLGQngCc3OIds64fxccdBthliVV2ntfA0mckY=" \
+        https://hostname/v1/peers
+
+## <a name="head_peers_delete">API Peers Delete
+|POST       |/peers|
+|-----------|-----------------|
+|Parameters:| hosts - `list` List of Hosts(**Required**)|
+|Response: |HTTP/1.1 200 OK|
+
+Example:
+
+    curl -i -X DELETE \
+        -H "Content-Type: application/json" \
+        -H "Date: Fri, 12 Feb 2016 14:42:16 +0000" \
+        -H "Authorization: HMAC_SHA256 MyApp:uFyGuaMIygEqnUomp0Ir7wx8WO0WffiRvc5CKXkmvkI=" \
+        https://hostname/v1/peers
+

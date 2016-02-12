@@ -1,0 +1,12 @@
+[Unit]
+Description=Gluster Events Notifier
+After=syslog.target network.target glusterd glusterrestd
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/glusterevents agent
+Restart=on-failure
+LimitNOFILE=10000
+
+[Install]
+WantedBy=multi-user.target
